@@ -111,7 +111,7 @@ def send_delayed_results_with_exceptions(resp: Dict):
         )
 
 
-@app.get("/tasks/bg")
+@app.post("/tasks/bg")
 async def read_task(
     background_tasks: BackgroundTasks,
     q: Union[str, None] = None,

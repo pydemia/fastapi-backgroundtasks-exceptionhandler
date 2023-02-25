@@ -135,18 +135,25 @@ class BackgroundTaskExceptionMiddleware(ExceptionMiddleware):
         try:
             await self.app(scope, receive, sender)
         except Exception as exc:
+            request = Request(scope)
+            request_msg = "\n".join([
+                "Request",
+                f"method: {request.method}",
+                f"url: {request.url}",
+                f"headers: {request.headers}",
+            ])
             real_exc = exc.__cause__
             # Expected: raised from original ExceptionMiddleware
             if real_exc:
                 if isinstance(real_exc, BackgroundTaskException):
-                    log.error(f"{real_exc.logMessage}")
+                    log.error(f"{request_msg}\n{real_exc.logMessage}")
                     raise real_exc
                 else:
                     wrapped_exc = BackgroundTaskException(ResponseCode(message="UnHandled Error"), e=real_exc)
-                    log.error(f"{wrapped_exc.logMessage}")
+                    log.error(f"{request_msg}\n{wrapped_exc.logMessage}")
                     raise real_exc
             else:
                 # Unexpected: Not raised from original ExceptionMiddleware
                 wrapped_exc = BackgroundTaskException(ResponseCode(message="UnHandled Error"), e=exc)
-                log.error(f"{wrapped_exc.logMessage}")
+                log.error(f"{request_msg}\n{wrapped_exc.logMessage}")
                 raise exc
