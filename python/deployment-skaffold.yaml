@@ -1,0 +1,54 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-demo-skaffold
+  namespace: default
+  labels:
+    app/group: fastapi-demo
+    language: python
+    app/profile: debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app/group: fastapi-demo
+      language: python
+      app/profile: debug
+  template:
+    metadata:
+      labels:
+        app/group: fastapi-demo
+        language: python
+        app/profile: debug
+    spec:
+      serviceAccountName: default
+      containers:
+      - name: server
+        image: pydemia/fastapi-demo:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        args:
+        - gunicorn
+        - fastapi_app.main:app
+        - --reload
+        - -k=uvicorn.workers.UvicornWorker
+        - --log-config=logging.conf
+        - -c=gunicorn_conf.py
+        env:
+          - name: HOST
+            value: "0.0.0.0"
+          - name: PORT
+            value: "8000"
+        resources:
+          requests:
+            memory: "3G"
+            cpu: "500m"
+          limits:
+            memory: "3G"
+            cpu: "1"
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 5

@@ -1,0 +1,122 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "FastAPI: gunicorn",
+        "type": "python",
+        "request": "launch",
+        "module": "gunicorn",
+        "args": [
+          "fastapi_app.main:app",
+          "--preload",
+          // "--reload",
+          "-k=uvicorn.workers.UvicornWorker",
+          "--log-config=logging.conf",
+          "-c=gunicorn_conf.py"
+        ],
+        "cwd": "${workspaceFolder}/python",
+        "console": "internalConsole",
+        "envFile": "${workspaceFolder}/.env",
+        "env": {
+          "HOST": "0.0.0.0",
+          "PORT": "8000"
+        }
+      },
+      {
+        "name": "FastAPI: uvicorn",
+        "type": "python",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": [
+          "fastapi_app.main:app",
+          // "--reload",
+          "--log-config=logging.conf"
+        ],
+        "justMyCode": false,
+        "cwd": "${workspaceFolder}/python",
+        "console": "internalConsole",
+        "envFile": "${workspaceFolder}/.env",
+        "env": {
+          "HOST": "0.0.0.0",
+          "PORT": "8000"
+        }
+      },
+      {
+        "name": "FastAPI: uvicorn-ptvsd",
+        "type": "python",
+        "request": "launch",
+        "module": "ptvsd",
+        "args": [
+          "--host",
+          "${HOST}",
+          "--port",
+          "${DEBUG_PORT}",
+          "-m",
+          "uvicorn",
+          // "gunicorn",
+          "fastapi_app.main:app",
+          "--reload",
+          // "-k=uvicorn.workers.UvicornWorker",
+          "--log-config=logging.conf"
+          // "-c=gunicorn_conf_attaching.py"
+        ],
+        "cwd": "${workspaceFolder}/python",
+        "console": "internalConsole",
+        "envFile": "${workspaceFolder}/.env",
+        "env": {
+          "HOST": "0.0.0.0",
+          "PORT": "8000",
+          "DEBUG_PORT": "5678",
+          "WORKERS_PER_CORE": "1",
+          "MAX_WORKERS": "1",
+          "CPU_MAX": "1"
+        }
+      },
+      {
+        "name": "Cloud-code: Run/Debug on Kubernetes",
+        "type": "cloudcode.kubernetes",
+        "request": "launch",
+        "skaffoldConfig": "${workspaceFolder}/python/skaffold.yaml",
+        "watch": true,
+        "cleanUp": false,
+        "portForward": true,
+        "imageRegistry": "docker.io/pydemia",
+        "internalConsoleOptions": "openOnSessionStart",
+        "debug": [
+          {
+            "image": "pydemia/fastapi-demo:latest",
+            "containerName": "server",
+            "sourceFileMap": {
+              "${workspaceFolder}/python/fastapi_app": "/workdir/fastapi_app"
+            }
+          },
+          {
+            "image": "pydemia/fastapi-demo",
+            "containerName": "server",
+            "sourceFileMap": {
+              "${workspaceFolder}/python/fastapi_app": "/workdir/fastapi_app"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Attach to Kubernetes Pod (Python)",
+        "type": "cloudcode.kubernetes",
+        "request": "attach",
+        "language": "Python",
+        "debugPort": 5678,
+        "podSelector": {
+          "app/group": "fastapi-demo",
+          "language": "python",
+          "app/profile": "prod"
+        },
+        "localRoot": "${workspaceFolder}/python",
+        "remoteRoot": "/workdir"
+        // "localRoot": "${workspaceFolder}/python/fastapi_app",
+        // "remoteRoot": "/workdir/fastapi_app"
+      }
+    ]
+}

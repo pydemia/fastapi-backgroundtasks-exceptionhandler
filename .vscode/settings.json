@@ -1,0 +1,10 @@
+{
+    "pythonPathSetter.sourceDirs": [
+        "src",
+        "python"
+    ],
+    "python.linting.flake8Enabled": false,
+    "python.linting.pylintEnabled": false,
+    "python.linting.mypyEnabled": true,
+    "python.linting.enabled": true,
+}

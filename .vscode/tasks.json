@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "docker-build",
+      "label": "docker-build",
+      "platform": "python",
+      "dockerBuild": {
+        "tag": "fastapi-demo:latest",
+        "dockerfile": "${workspaceFolder}/python/app-skaffold.Dockerfile",
+        "context": "${workspaceFolder}/python",
+        "pull": true
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: debug",
+      "dependsOn": ["docker-build"],
+      "dockerRun": {
+        "containerName": "server",
+        "image": "fastapi-demo:latest",
+        "env": {
+          "APP_MODULE": "fastapi_app.main:app",
+        },
+        "volumes": [
+          {
+            "containerPath": "/workdir/fastapi_app",
+            "localPath": "${workfspaceFolder}/python/fastapi_app"
+          }
+        ],
+        "ports": [
+          {
+            "containerPort": 8000,
+            "hostPort": 8000
+          }
+        ]
+      },
+      "python": {
+        "debugPort": 5678,
+        "args": [
+          "fastapi_app.main:app",
+          "--preload"
+        ],
+        "module": "gunicorn"
+      }
+    }
+  ]
+}

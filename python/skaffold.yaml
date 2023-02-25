@@ -1,0 +1,68 @@
+# See: https://skaffold.dev/docs/references/yaml/
+apiVersion: skaffold/v2beta28
+kind: Config
+build:
+  artifacts:
+  # NO TAG SHOULD BE SPECIFIED!!!!!!!!!!
+  - image: pydemia/fastapi-demo
+  # - image: pydemia/fastapi-demo:latest
+    context: ./
+    # context: /home/pydemia/git/workflow-python/app/
+    # sync:
+    #   manual:
+    #   - src: "./"
+    #     dest: "/workdir/"
+    #   # infer: ["**/*"]
+    docker:
+      dockerfile: app-skaffold.Dockerfile
+      # target: harbor.accuinsight.net/aiip/aiip-workflow-backend-py-debug
+      noCache: false
+  #   kaniko:
+  #     dockerfile: workflow_backend_skaffold.Dockerfile
+  #     target: harbor.accuinsight.net/aiip/aiip-workflow-backend-py-debug
+  #     cleanup: false
+  #     insecure: false
+  #     noPush: false
+  #     image: gcr.io/kaniko-project/executor
+  # cluster:
+  #   namespace: aiip-workflow
+  #   serviceAccount: aiip-workflow
+  #   pullSecretName: harbor-accuinsight-cred
+    # kaniko: {}
+    # requires:
+    #   - image: 
+  local:
+    push: true
+  #   useDockerCLI: true
+deploy:
+  kubectl:
+    manifests:
+    - deployment-skaffold.yaml
+portForward:
+- resourceType: deployment
+  resourceName: fastapi-demo-skaffold
+  namespace: default
+  port: 8000
+  localPort: 8000
+- resourceType: deployment
+  resourceName: fastapi-demo-skaffold
+  namespace: default
+  port: 5678
+  localPort: 5678
+profiles:
+- name: cloudbuild
+  build:
+    googleCloudBuild: {}
+# profiles:
+# - name: cloudbuild
+#   build:
+#     googleCloudBuild: {}
+#     artifacts:
+#     - image: harbor.accuinsight.net/aiip/aiip-workflow-backend-py:debug
+#       context: ${workspaceFolder}/app
+#       sync:
+#         infer:
+#         - '**/*'
+#       kaniko:
+#         cache: {}
+

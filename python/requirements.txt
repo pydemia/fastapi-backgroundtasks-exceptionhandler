@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+gunicorn
+
+ptvsd
+pydevd
+
+# Unable to load extension: pydevd_plugins.extensions.types.pydevd_plugin_pandas_types
+pandas
