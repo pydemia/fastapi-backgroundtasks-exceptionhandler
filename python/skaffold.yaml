@@ -7,27 +7,27 @@ build:
   - image: pydemia/fastapi-demo
   # - image: pydemia/fastapi-demo:latest
     context: ./
-    # context: /home/pydemia/git/workflow-python/app/
+    # context: ./python/
     # sync:
     #   manual:
-    #   - src: "./"
+    #   - src: "./python"
     #     dest: "/workdir/"
     #   # infer: ["**/*"]
     docker:
       dockerfile: app-skaffold.Dockerfile
-      # target: harbor.accuinsight.net/aiip/aiip-workflow-backend-py-debug
+      # target: pydemia/fastapi-demo-debug
       noCache: false
   #   kaniko:
-  #     dockerfile: workflow_backend_skaffold.Dockerfile
-  #     target: harbor.accuinsight.net/aiip/aiip-workflow-backend-py-debug
+  #     dockerfile: app-skaffold.Dockerfile
+  #     target: pydemia/fastapi-demo-debug
   #     cleanup: false
   #     insecure: false
   #     noPush: false
   #     image: gcr.io/kaniko-project/executor
   # cluster:
-  #   namespace: aiip-workflow
-  #   serviceAccount: aiip-workflow
-  #   pullSecretName: harbor-accuinsight-cred
+  #   namespace: default
+  #   serviceAccount: default
+  #   pullSecretName: docker-cred
     # kaniko: {}
     # requires:
     #   - image: 
@@ -58,8 +58,8 @@ profiles:
 #   build:
 #     googleCloudBuild: {}
 #     artifacts:
-#     - image: harbor.accuinsight.net/aiip/aiip-workflow-backend-py:debug
-#       context: ${workspaceFolder}/app
+#     - image: pydemia/fastapi-demo:debug
+#       context: ${workspaceFolder}/python
 #       sync:
 #         infer:
 #         - '**/*'

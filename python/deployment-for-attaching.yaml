@@ -38,6 +38,7 @@ spec:
         - --port
         - $(DEBUG_PORT)
         - debugserver.py
+        - --log-config=/workdir/logging.conf
         # - -m
         # - uvicorn
         # # - gunicorn
